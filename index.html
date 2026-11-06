@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reelsmith: AI video and thumbnail studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Hanken+Grotesk:wght@400;600&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f7f7fb;--fg:#12131a;--mut:#5d6072;--card:#fff;--bd:#d9dae6;--ac:#5b4bff;--ac-t:#fff;--pl:#e8246b;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0e14;--fg:#eceef8;--mut:#9a9eb5;--card:#171925;--bd:#2a2d40;--ac:#7f72ff;--ac-t:#0d0e14;--pl:#ff4d8d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d0e14;--fg:#eceef8;--mut:#9a9eb5;--card:#171925;--bd:#2a2d40;--ac:#7f72ff;--ac-t:#0d0e14;--pl:#ff4d8d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.55 "Hanken Grotesk",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Arial Black",sans-serif;line-height:1.08;margin:0}
+h1{font-size:clamp(2.4rem,7vw,4.6rem);font-weight:800;letter-spacing:-.03em}
+h2{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em}
+h3{font-size:1.15rem;font-weight:600}
+a{color:inherit}
+.w{max-width:1080px;margin:0 auto;padding:0 20px}
+section{padding:64px 0}
+nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0;gap:12px;flex-wrap:wrap}
+.logo{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.3rem;text-decoration:none}
+.logo i{color:var(--pl);font-style:normal}
+nav div{display:flex;gap:18px;font-size:.95rem}
+nav a{text-decoration:none;color:var(--mut)}
+.btn{display:inline-block;border:0;border-radius:10px;padding:12px 20px;font:600 1rem "Hanken Grotesk",sans-serif;cursor:pointer;background:var(--ac);color:var(--ac-t);text-decoration:none}
+.btn.o{background:transparent;color:var(--fg);border:1.5px solid var(--bd)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,canvas:focus-visible{outline:3px solid var(--pl);outline-offset:2px}
+.sub{color:var(--mut);max-width:56ch;margin:16px 0 28px}
+.tl{margin-top:44px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;position:relative;overflow:hidden}
+.tr{display:flex;gap:6px;margin:6px 0}
+.tr b{height:30px;border-radius:6px;display:block;font:600 .72rem/30px "Hanken Grotesk";padding:0 8px;color:#fff;white-space:nowrap;overflow:hidden}
+.ph{position:absolute;top:0;bottom:0;width:2px;background:var(--pl);left:0;animation:sc 7s linear infinite}
+.ph::before{content:"";position:absolute;top:0;left:-5px;border:6px solid transparent;border-top-color:var(--pl)}
+@keyframes sc{to{left:100%}}
+@media (prefers-reduced-motion:reduce){.ph{animation:none;left:38%}}
+.g{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin-top:28px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.c p{margin:0;color:var(--mut);font-size:.95rem}
+.pr{font:800 2rem "Bricolage Grotesque",sans-serif}
+.pr small{font:400 .9rem "Hanken Grotesk";color:var(--mut)}
+.c ul{margin:0;padding-left:18px;color:var(--mut);font-size:.92rem;flex:1}
+.c.f{border:2px solid var(--ac)}
+.tabs{display:flex;gap:8px;margin:24px 0 14px;flex-wrap:wrap}
+.tabs button{padding:9px 16px;border-radius:999px;border:1.5px solid var(--bd);background:transparent;color:var(--fg);font:600 .95rem "Hanken Grotesk";cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ac);color:var(--ac-t);border-color:var(--ac)}
+.st{display:grid;gap:16px;grid-template-columns:minmax(0,2fr) minmax(220px,1fr)}
+@media (max-width:760px){.st{grid-template-columns:1fr}}
+.cv{width:100%;display:block;border-radius:10px;background:#000;border:1px solid var(--bd);touch-action:none}
+.ctl{display:flex;flex-direction:column;gap:10px}
+label{font-size:.85rem;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+input,select{font:400 1rem "Hanken Grotesk";padding:9px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--fg);width:100%}
+input[type=color]{padding:2px;height:38px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1;min-width:90px}
+[hidden]{display:none!important}
+textarea{font:400 1rem "Hanken Grotesk",sans-serif;padding:9px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--fg);width:100%}
+.note{font-size:.85rem;color:var(--mut);margin:0}
+dialog label{margin-top:10px}
+dialog{border:1px solid var(--bd);border-radius:16px;background:var(--card);color:var(--fg);max-width:420px;width:calc(100% - 32px);padding:24px}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.m{display:grid;gap:8px;margin:14px 0}
+.m label{flex-direction:row;align-items:center;gap:10px;border:1.5px solid var(--bd);border-radius:10px;padding:11px;color:var(--fg);font-size:1rem}
+.m input{width:auto}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:10px;font-weight:600;max-width:90%;z-index:9}
+footer{border-top:1px solid var(--bd);padding:28px 0;color:var(--mut);font-size:.9rem}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:12px;font:400 .9rem/1.5 "Hanken Grotesk";margin:0;min-height:60px}
+</style>
+</head>
+<body>
+<div class="w">
+<nav><a class="logo" href="#top">Reel<i>smith</i></a><div><a href="#studio">Studio</a><a href="#portfolio">Portfolio</a><a href="#services">Services</a><a href="#pricing">Pricing</a><button class="btn o" id="si" style="padding:6px 12px">Sign in</button></div></nav>
+</div>
+
+<header class="w" id="top" style="padding-top:40px">
+<h1>Videos and thumbnails that get the click.</h1>
+<p class="sub">Edit them yourself in the free studio, or hand them to us. Short-form clips, thumbnails and AI video, delivered in 48 hours.</p>
+<div class="row" style="max-width:420px"><a class="btn" href="#studio">Open the studio</a><a class="btn o" href="#services">Order an edit</a></div>
+<div class="tl" aria-hidden="true">
+<div class="tr"><b style="width:30%;background:#5b4bff">Hook</b><b style="width:22%;background:#e8246b">B-roll</b><b style="width:40%;background:#0f9d8a">Story</b></div>
+<div class="tr"><b style="width:18%;background:#b56a00">Captions</b><b style="width:46%;background:#5b4bff">Voiceover</b><b style="width:30%;background:#e8246b">Outro</b></div>
+<div class="tr"><b style="width:70%;background:#2d6cdf">Music</b></div>
+<span class="ph"></span></div>
+<canvas id="cvr" class="cv" width="1500" height="500" style="margin-top:20px" aria-label="Reelsmith cover image"></canvas>
+<div class="row" style="margin-top:10px;max-width:260px"><button class="btn o" id="dc">Download cover</button></div>
+</header>
+
+<section id="studio"><div class="w">
+<h2>The studio</h2>
+<p class="sub">Editing happens in your browser and files stay on your device. AI tools send only your text prompt.</p>
+<div class="tabs" role="tablist">
+<button role="tab" id="t1" aria-selected="true" aria-controls="p1">Thumbnail editor</button>
+<button role="tab" id="t2" aria-selected="false" aria-controls="p2">Video editor</button>
+<button role="tab" id="t3" aria-selected="false" aria-controls="p3">Script writer</button>
+<button role="tab" id="t4" aria-selected="false" aria-controls="p4">AI images</button>
+<button role="tab" id="t5" aria-selected="false" aria-controls="p5">AI shorts</button>
+</div>
+
+<div id="p1" role="tabpanel" class="st">
+<canvas id="tc" class="cv" width="1280" height="720" tabindex="0" aria-label="Thumbnail canvas. Drag items to move them."></canvas>
+<div class="ctl">
+<label>Background<input type="color" id="bg" value="#5b4bff"></label>
+<label>Text<input id="tt" value="YOU WON’T BELIEVE THIS"></label>
+<div class="row"><label>Color<input type="color" id="tcol" value="#ffffff"></label><label>Size<input type="number" id="ts" value="110" min="20" max="300"></label></div>
+<button class="btn" id="addT">Add text</button>
+<div class="row"><button class="btn o" id="addR">Add block</button><label style="flex:1">Add image<input type="file" id="img" accept="image/*"></label></div>
+<label>Size preset<select id="pre"><option value="1280,720">YouTube 16:9</option><option value="1080,1920">TikTok / Reels 9:16</option><option value="1080,1080">Instagram 1:1</option></select></label>
+<label>Template<select id="tpl"><option value="">Choose a template</option><option>Bold reaction</option><option>Tutorial</option><option>Big question</option><option>Before and after</option></select></label>
+<div class="row"><label>Tolerance<input type="range" id="tol" min="10" max="150" value="60"></label><button class="btn o" id="rb">Remove background</button></div>
+<button class="btn o" id="sv">Save to portfolio</button>
+<div class="row"><button class="btn o" id="del">Delete selected</button><button class="btn" id="exT">Download PNG</button></div>
+</div></div>
+
+<div id="p2" role="tabpanel" class="st" hidden>
+<div><canvas id="vc" class="cv" width="1280" height="720" aria-label="Video preview"></canvas>
+<video id="v" playsinline hidden></video>
+<div class="row" style="margin-top:10px"><button class="btn o" id="pp">Play / pause</button><button class="btn" id="exV">Export video</button></div></div>
+<div class="ctl">
+<label>Video file<input type="file" id="vf" accept="video/*"></label>
+<label>Caption<input id="cap" value="Add your caption"></label>
+<label>Auto-captions: paste your script<textarea id="at" rows="3"></textarea></label>
+<button class="btn o" id="ac">Time captions across the clip</button>
+<div class="row"><label>Start (s)<input type="number" id="s0" value="0" min="0" step="0.1"></label><label>End (s)<input type="number" id="s1" value="0" min="0" step="0.1"></label></div>
+<div class="row"><label>Filter<select id="fl"><option value="none">None</option><option value="grayscale(1)">Black and white</option><option value="sepia(.8)">Warm</option><option value="saturate(1.8) contrast(1.1)">Vivid</option></select></label><label>Speed<select id="sp"><option>0.5</option><option selected>1</option><option>1.5</option><option>2</option></select></label></div>
+<label>Format<select id="vr"><option value="1280,720">16:9</option><option value="720,1280">9:16</option><option value="1000,1000">1:1</option></select></label>
+<p style="font-size:.85rem;color:var(--mut);margin:0">Exports as WebM or MP4, depending on your browser. Export plays the clip in real time.</p>
+</div></div>
+
+<div id="p3" role="tabpanel" class="st" hidden>
+<div><pre id="out" aria-live="polite">Enter a topic and press Write script.</pre></div>
+<div class="ctl">
+<label>Topic<input id="tp" value="how I edit videos in 10 minutes"></label>
+<label>Platform<select id="pf"><option>YouTube Short</option><option>TikTok</option><option>Instagram Reel</option></select></label>
+<button class="btn" id="wr">Write script</button>
+<button class="btn o" id="cp">Copy script</button>
+<p style="font-size:.85rem;color:var(--mut);margin:0">This uses built-in templates. With an OpenAI key on your server, the same button can call the API.</p>
+</div></div>
+
+<div id="p4" role="tabpanel" class="st" hidden>
+<div><img id="ai" class="cv" style="aspect-ratio:16/9;object-fit:contain" alt="AI generated image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'/%3E">
+<div class="row" style="margin-top:10px"><button class="btn o" id="aU">Use in thumbnail</button><button class="btn o" id="aS">Save to portfolio</button><button class="btn" id="aD">Download PNG</button></div></div>
+<div class="ctl"><label>Describe the image<input id="ap" value="neon city skyline at night with a glowing play button"></label>
+<label>Style<select id="as"><option>flat vector</option><option>cinematic neon</option><option>bold poster</option><option>minimal geometric</option></select></label>
+<button class="btn" id="aG">Generate image</button><p class="note">Uses 1 credit. Sign in to get 10 free credits. Images are drawn as vector art.</p></div></div>
+
+<div id="p5" role="tabpanel" class="st" hidden>
+<div><canvas id="sc" class="cv" width="540" height="960" style="max-width:320px;margin:auto" aria-label="Short preview"></canvas>
+<div class="row" style="margin-top:10px"><button class="btn o" id="stP">Play</button><button class="btn" id="stE">Export short</button></div></div>
+<div class="ctl"><label>Topic<input id="stp" value="3 habits that changed my mornings"></label>
+<label>Tone<select id="stn"><option>energetic</option><option>calm</option><option>funny</option><option>dramatic</option></select></label>
+<label style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="stv" style="width:auto"> Read aloud in preview</label>
+<button class="btn" id="stg">Generate short</button><p class="note">Uses 1 credit. Exports a vertical 9:16 video with animated text.</p></div></div>
+</div></section>
+
+<section id="portfolio"><div class="w"><h2>Portfolio</h2><p class="sub">Designs you save from the studio appear here on this device.</p><div class="g" id="gal"></div></div></section>
+
+<section id="services"><div class="w">
+<h2>Done-for-you edits</h2>
+<p class="sub">Fixed prices. Free revisions. You pay when you approve the first draft.</p>
+<div class="g">
+<div class="c"><h3>Thumbnail</h3><div class="pr">$100</div><p>Three concepts, one final, source file included.</p><button class="btn" data-pay="Thumbnail|100">Order</button></div>
+<div class="c f"><h3>Short-form clips</h3><div class="pr">$150</div><p>Five captioned clips cut from your long video, ready to post.</p><button class="btn" data-pay="Short-form clips|150">Order</button></div>
+<div class="c"><h3>AI video</h3><div class="pr">$200</div><p>A 30-second AI-generated video with voiceover and music.</p><button class="btn" data-pay="AI video|200">Order</button></div>
+</div></div></section>
+
+<section id="pricing"><div class="w">
+<h2>Studio plans</h2>
+<p class="sub">Start free. Upgrade when you need more exports and credits.</p>
+<div class="g">
+<div class="c"><h3>Free</h3><div class="pr">$0<small> /month</small></div><ul><li>3 exports a month</li><li>720p with watermark</li><li>10 AI credits</li></ul><a class="btn o" href="#studio">Start free</a></div>
+<div class="c f"><h3>Pro</h3><div class="pr">$12<small> /month</small></div><ul><li>Unlimited exports</li><li>1080p, no watermark</li><li>300 AI credits</li><li>Premium templates</li></ul><button class="btn" data-pay="Pro plan|12">Choose Pro</button></div>
+<div class="c"><h3>VIP</h3><div class="pr">$29<small> /month</small></div><ul><li>4K exports</li><li>1,000 AI credits</li><li>Priority queue</li><li>One free gig each month</li></ul><button class="btn" data-pay="VIP plan|29">Choose VIP</button></div>
+</div></div></section>
+
+<footer><div class="w">Reelsmith. Pay with M-Pesa, PayPal or card via Paystack.</div></footer>
+
+<dialog id="dlg">
+<h3 id="dt">Checkout</h3>
+<p id="dp" style="color:var(--mut);margin:6px 0 0"></p>
+<div class="m" role="radiogroup" aria-label="Payment method">
+<label><input type="radio" name="pm" value="M-Pesa" checked> M-Pesa</label>
+<label><input type="radio" name="pm" value="PayPal"> PayPal</label>
+<label><input type="radio" name="pm" value="Paystack"> Card or bank (Paystack)</label>
+</div>
+<label id="ph">M-Pesa phone number<input id="phn" placeholder="2547XXXXXXXX" inputmode="tel"></label>
+<div class="row" style="margin-top:16px"><button class="btn o" id="cx">Cancel</button><button class="btn" id="go">Pay now</button></div>
+</dialog>
+<dialog id="sdlg"><h3>Sign in</h3><p class="note" style="margin-top:6px">Enter your email and we will send you a sign-in link. New accounts get 10 AI credits.</p><label>Name<input id="sname"></label><label>Email<input id="smail" type="email"></label><div class="row" style="margin-top:16px"><button class="btn o" id="scancel">Cancel</button><button class="btn" id="sgo">Continue</button></div></dialog>
+<div id="toast" hidden role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,3500)}
+/* tabs */
+document.querySelectorAll('[role=tab]').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('[role=tab]').forEach(x=>{x.setAttribute('aria-selected',x===b);$('#'+x.getAttribute('aria-controls')).hidden=x!==b})});
+/* thumbnail editor */
+const tc=$('#tc'),tx=tc.getContext('2d');let objs=[],sel=-1,drag=null;
+function drawT(out){
+ tx.fillStyle=$('#bg').value;tx.fillRect(0,0,tc.width,tc.height);
+ objs.forEach((o,i)=>{
+  if(o.t==='img')tx.drawImage(o.im,o.x,o.y,o.w,o.h);
+  else if(o.t==='rect'){tx.fillStyle=o.c;tx.fillRect(o.x,o.y,o.w,o.h)}
+  else{tx.font='800 '+o.s+'px "Bricolage Grotesque",Impact,sans-serif';tx.textBaseline='top';tx.lineJoin='round';tx.lineWidth=o.s/7;tx.strokeStyle='#000';tx.strokeText(o.v,o.x,o.y);tx.fillStyle=o.c;tx.fillText(o.v,o.x,o.y);o.w=tx.measureText(o.v).width;o.h=o.s}
+  if(!out&&i===sel){tx.strokeStyle='#ff4d8d';tx.lineWidth=4;tx.setLineDash([12,8]);tx.strokeRect(o.x-6,o.y-6,o.w+12,o.h+12);tx.setLineDash([])}
+ })}
+function addObj(o){objs.push(o);sel=objs.length-1;drawT()}
+$('#addT').onclick=()=>addObj({t:'text',v:$('#tt').value||'Text',c:$('#tcol').value,s:+$('#ts').value||100,x:60,y:60+objs.length*30,w:0,h:0});
+$('#addR').onclick=()=>addObj({t:'rect',c:$('#tcol').value,x:80,y:80,w:300,h:160});
+$('#img').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{const k=Math.min(1,tc.width*.6/im.width,tc.height*.8/im.height);addObj({t:'img',im,x:40,y:40,w:im.width*k,h:im.height*k})};im.src=URL.createObjectURL(f)};
+$('#bg').oninput=()=>drawT();
+$('#pre').onchange=e=>{const[w,h]=e.target.value.split(',').map(Number);tc.width=w;tc.height=h;objs.forEach(o=>{o.x=Math.min(o.x,w-50);o.y=Math.min(o.y,h-50)});drawT()};
+$('#del').onclick=()=>{if(sel>=0){objs.splice(sel,1);sel=-1;drawT()}else toast('Select an item first')};
+function pt(e){const r=tc.getBoundingClientRect();return[(e.clientX-r.left)*tc.width/r.width,(e.clientY-r.top)*tc.height/r.height]}
+tc.onpointerdown=e=>{const[x,y]=pt(e);sel=-1;for(let i=objs.length-1;i>=0;i--){const o=objs[i];if(x>=o.x&&x<=o.x+o.w&&y>=o.y&&y<=o.y+o.h){sel=i;drag=[x-o.x,y-o.y];tc.setPointerCapture(e.pointerId);break}}drawT()};
+tc.onpointermove=e=>{if(drag&&sel>=0){const[x,y]=pt(e);objs[sel].x=x-drag[0];objs[sel].y=y-drag[1];drawT()}};
+tc.onpointerup=()=>drag=null;
+$('#exT').onclick=()=>{drawT(true);tc.toBlob(b=>save('thumbnail.png',b));drawT()};
+addObj({t:'text',v:'YOU WON’T BELIEVE THIS',c:'#ffffff',s:110,x:60,y:260,w:0,h:0});
+if(document.fonts)document.fonts.ready.then(()=>drawT());
+/* video editor */
+const v=$('#v'),vc=$('#vc'),vx=vc.getContext('2d');let rec=null,chunks=[],caps=[];
+function drawV(){
+ vx.filter='none';vx.fillStyle='#000';vx.fillRect(0,0,vc.width,vc.height);
+ if(v.videoWidth){const k=Math.max(vc.width/v.videoWidth,vc.height/v.videoHeight),w=v.videoWidth*k,h=v.videoHeight*k;vx.filter=$('#fl').value;vx.drawImage(v,(vc.width-w)/2,(vc.height-h)/2,w,h);vx.filter='none'}
+ const cp=caps.find(x=>v.currentTime>=x.a&&v.currentTime<x.b),c=caps.length?(cp?cp.t:''):$('#cap').value;if(c){const s=Math.round(vc.width/14);vx.font='800 '+s+'px "Bricolage Grotesque",sans-serif';vx.textAlign='center';vx.textBaseline='bottom';vx.lineWidth=s/6;vx.lineJoin='round';vx.strokeStyle='#000';vx.strokeText(c,vc.width/2,vc.height-s,vc.width*.9);vx.fillStyle='#fff';vx.fillText(c,vc.width/2,vc.height-s,vc.width*.9)}
+ const en=+$('#s1').value||v.duration;
+ if(!v.paused&&v.currentTime>=en){v.pause();if(rec&&rec.state!=='inactive')rec.stop()}
+ requestAnimationFrame(drawV)}
+drawV();
+$('#vf').onchange=e=>{const f=e.target.files[0];if(!f)return;v.sr
